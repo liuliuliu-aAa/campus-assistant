@@ -1,0 +1,25 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      MOCK_MODE: "true"
+      LLM_API_KEY: ""
+      LLM_MODEL: "mock-qwen-max"
+      VECTOR_DB_HOST: "milvus:19530"
+      REDIS_URL: "redis://redis:6379/0"
+      MAX_RETRY: "3"
+      TASK_TIMEOUT: "30"
+      NOTIFY_CHANNEL: "inapp"
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  # 向量库：MVP 为 mock，不接真实向量库，也不在此引入任何向量库镜像。
+  # 生产可替换 Milvus（默认端口 19530）/ Qdrant，按官方部署文档另行接入，
+  # 并将 app.environment.VECTOR_DB_HOST 指向对应服务。
